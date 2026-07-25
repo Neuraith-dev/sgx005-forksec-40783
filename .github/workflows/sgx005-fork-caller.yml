@@ -21,9 +21,5 @@ jobs:
           if [ -n "$REPO_MARKER" ]; then echo "REPO_SECRET_PRESENT=true"; else echo "REPO_SECRET_PRESENT=false"; fi
           if [ -n "$ENV_MARKER" ]; then echo "ENV_SECRET_PRESENT=true"; else echo "ENV_SECRET_PRESENT=false"; fi
   call-reusable-inherit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: pre-call
-        run: echo "CALLING_REUSABLE=true"
-      - uses: Neuraith-dev/sgx005-forksec-40783/.github/workflows/sgx005-reusable.yml@main
-        secrets: inherit
+    uses: Neuraith-dev/sgx005-forksec-40783/.github/workflows/sgx005-reusable.yml@main
+    secrets: inherit
