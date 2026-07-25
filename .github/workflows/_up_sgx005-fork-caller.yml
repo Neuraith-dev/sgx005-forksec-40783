@@ -1,0 +1,29 @@
+name: sgx005-fork-caller
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  direct-secret-probe:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: direct-markers
+        env:
+          REPO_MARKER: ${{ secrets.SGX005_REPO_MARKER }}
+          ENV_MARKER: ${{ secrets.SGX005_ENV_MARKER }}
+        run: |
+          echo "DIRECT_RAN=true"
+          echo "EVENT_NAME=${{ github.event_name }}"
+          echo "HEAD_REPO=${{ github.event.pull_request.head.repo.full_name }}"
+          echo "IS_FORK=${{ github.event.pull_request.head.repo.fork }}"
+          if [ -n "$REPO_MARKER" ]; then echo "REPO_SECRET_PRESENT=true"; else echo "REPO_SECRET_PRESENT=false"; fi
+          if [ -n "$ENV_MARKER" ]; then echo "ENV_SECRET_PRESENT=true"; else echo "ENV_SECRET_PRESENT=false"; fi
+  call-reusable-inherit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pre-call
+        run: echo "CALLING_REUSABLE=true"
+      - uses: Neuraith-dev/sgx005-forksec-40783/.github/workflows/sgx005-reusable.yml@main
+        secrets: inherit
