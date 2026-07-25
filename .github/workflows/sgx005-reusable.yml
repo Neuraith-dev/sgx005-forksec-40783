@@ -1,0 +1,22 @@
+name: sgx005-reusable
+on:
+  workflow_call:
+    secrets:
+      REPO_MARKER:
+        required: false
+      ENV_MARKER:
+        required: false
+jobs:
+  reusable-probe:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: reusable-markers
+        env:
+          REPO_MARKER: ${{ secrets.REPO_MARKER }}
+          ENV_MARKER: ${{ secrets.ENV_MARKER }}
+          STAGING_SECRET: ${{ secrets.SGX005_ENV_MARKER }}
+        run: |
+          echo "REUSABLE_RAN=true"
+          if [ -n "$REPO_MARKER" ]; then echo "REUSABLE_REPO_SECRET=true"; else echo "REUSABLE_REPO_SECRET=false"; fi
+          if [ -n "$ENV_MARKER" ] || [ -n "$STAGING_SECRET" ]; then echo "REUSABLE_ENV_SECRET=true"; else echo "REUSABLE_ENV_SECRET=false"; fi
